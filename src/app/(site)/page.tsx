@@ -5,15 +5,19 @@ import ExpertiseSection from "@/components/sections/ExpertiseSection";
 import HeroSection from "@/components/sections/HeroSection";
 import ProjectsSection from "@/components/sections/ProjectSection";
 import { client } from "@/sanity/lib/client";
-import { heroProfileQuery } from "@/sanity/lib/queries";
+import { experienceQuery, heroProfileQuery } from "@/sanity/lib/queries";
 
 export default async function Home() {
-  const profile = await client.fetch(heroProfileQuery)
+  const [profile, experience] = await Promise.all([
+    client.fetch(heroProfileQuery),
+    client.fetch(experienceQuery),
+  ]);
+  
   return (
    <>
       <Navbar />
       <HeroSection profile={profile}/>
-      <ExperienceSection />
+      <ExperienceSection experience={experience} />
       <ExpertiseSection />
       <ProjectsSection />
       <ContactSection />

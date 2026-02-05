@@ -12,3 +12,27 @@ export const heroProfileQuery = groq`
     cvLink
   }
 `;
+
+export const experienceQuery = groq`
+  *[_type == "experience"]{
+    name,
+    company,
+    duration,
+    type,
+    description,
+
+    logo{
+      asset->{
+        _id,
+        url
+      }
+    },
+
+    images[]{
+      asset->{
+        _id,
+        url
+      }
+    }
+  }
+`;

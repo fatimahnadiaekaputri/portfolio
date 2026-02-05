@@ -62,3 +62,30 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   /* transition: all var(--transition); */
 }
+
+/* Hide arrows + make thin scrollbar */
+.no-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.25) transparent;
+}
+
+/* Chrome / Edge / Safari */
+.no-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.no-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.no-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.25);
+  border-radius: 999px;
+}
+
+/* REMOVE ARROWS */
+.no-scrollbar::-webkit-scrollbar-button {
+  display: none;
+}
+
+

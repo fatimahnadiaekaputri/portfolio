@@ -1,117 +1,186 @@
 "use client";
 
+import { Experience } from "@/types/Experience";
 import { motion } from "framer-motion";
+import { useEffect, useMemo, useRef, useState } from "react";
 
-const careerData = {
-    title: "Career Journey",
-    description:  "Currently a final year undergraduate student at Universitas Gadjah Mada. Passionate exploring tech and education fields.",
-    experiences: [
-        {
-            role: "XL Female Future Leader Batch 1 Awardee",
-            company: "XL Future Leaders",
-            period: "Nov 2024 - Jun 2025",
-        },
-        {
-            role: "Developer Intern",
-            company: "PT Indonesia Satu Tujuh",
-            period: "Jan 2024 - Mar 2024"
-        },
-        {
-            role: "Peer Learning Staff",
-            company: "Schoolfess Indonesia",
-            period: "Jan 2023 - Mar 2023"
-        },
-    ],
-    organizations: [
-        { name: "Organization 1", logo: "/org1.png" },
-        { name: "Organization 2", logo: "/org2.png" },
-        { name: "Organization 3", logo: "/org3.png" },
-    ],
-};
+export default function ExperienceSection({
+  experience,
+}: {
+  experience: Experience[];
+}) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [topFade, setTopFade] = useState(false);
+  const [bottomFade, setBottomFade] = useState(true);
 
-export default function ExperienceSection() {
-    const data = careerData;
+  // Pisahin berdasarkan type
+  const experiencesOnly = useMemo(
+    () => experience.filter((e) => e.type !== "organization"),
+    [experience]
+  );
 
-    return (
-        <section id="experience" className="py-32" style={{background: "var(--background)", color: "var(--foreground)" }}>
-            <motion.div 
-                className="max-w-6xl mx-auto px-5 grid gap-20 lg:grid-cols-2"
-                initial={{opacity: 0, y:24}}
-                whileInView={{opacity: 1, y: 0}}
-                viewport={{once: true}}
-                transition={{duration: 0.8}}
+  const organizationsOnly = useMemo(
+    () => experience.filter((e) => e.type === "organization"),
+    [experience]
+  );
+
+  useEffect(() => {
+    onScroll();
+  }, []);
+
+  const onScroll = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const isScrollable = el.scrollHeight > el.clientHeight;
+
+    setTopFade(isScrollable && el.scrollTop > 6);
+    setBottomFade(
+      isScrollable &&
+        el.scrollTop + el.clientHeight < el.scrollHeight - 6
+    );
+  };
+
+  return (
+    <section id="experience" className="py-32">
+      <div className="max-w-6xl mx-auto px-5 grid gap-20 lg:grid-cols-2">
+
+        {/* LEFT */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <h2 className="text-5xl font-semibold leading-tight">
+            Career <br /> Journey
+          </h2>
+
+          <p className="mt-6 max-w-md opacity-70">
+            Currently a final year undergraduate student at Universitas Gadjah Mada.
+            Passionate exploring tech and education fields.
+          </p>
+        </motion.div>
+
+        {/* RIGHT */}
+        <div className="space-y-16">
+
+          {/* EXPERIENCE */}
+          <div className="relative">
+            {topFade && (
+              <div className="pointer-events-none absolute top-0 left-0 right-0 h-12 z-10
+              bg-linear-to-b from-background/90 to-transparent" />
+            )}
+
+            {bottomFade && (
+              <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-12 z-10
+              bg-linear-to-t from-background/90 to-transparent" />
+            )}
+
+            <div
+              ref={scrollRef}
+              onScroll={onScroll}
+              className="relative max-h-[260px] overflow-y-auto no-scrollbar pr-6"
             >
-                <div>
-                    <h2 className="text-5xl font-semibold leading-tight">
-                        {data.title.split(" ")[0]} <br />
-                        {data.title.split(" ")[1]}
-                    </h2>
+              <motion.ul className="space-y-14 pl-8">
+                {experiencesOnly.map((exp, i) => (
+                  <motion.li key={i} className="relative">
+                    <span
+                      className="absolute -left-6 top-1.5 h-2.5 w-2.5 rounded-full"
+                      style={{
+                        background: "var(--accent)",
+                        boxShadow: "0 0 8px var(--accent)",
+                      }}
+                    />
 
-                    <p className="mt-6 max-w-md text-base leading-relaxed" style={{color: "var(--muted-foreground)"}}>
-                        {data.description}
-                    </p>
-                    
-                    <div className="mt-12 h-48 w-48 rounded-3xl" style={{
-                        background: "linear-gradient(135deg, var(--accent-soft), transparent)",
-                        boxShadow: "var(--shadow-soft)",
-                    }}></div>
-                </div>
-
-                <div className="space-y-14">
-                    <div>
-                        <h3 className="text-2xl font-semibold mb-8"></h3>
-                        <motion.ul 
-                            className="relative space-y-10"
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{once: true}}
-                            variants={{visible: {transition: {staggerChildren: 0.2}}}}
-                        >
-                            {data.experiences.map((exp, i) => (
-                                <motion.li
-                                    key={i}
-                                    className="relative pl-10"
-                                    variants={{hidden: {opacity: 0, x: 20}, visible: {opacity: 1, x: 0}}}
-                                >
-                                    <span className="absolute left-0 top-1.5 h-3 w-3 rounded-full" style={{background: "var(--accent)", boxShadow: "0 0 12px var(--accent)",}}></span>
-
-                                    <div className="text-sm font-medium">{exp.role}</div>
-                                    <div className="text-sm italic opacity-80">{exp.company} ({exp.period})</div>
-                                </motion.li>
-                            ))}
-                        </motion.ul>
+                    {/* TYPE */}
+                    <div className="text-xs opacity-50 uppercase tracking-wide">
+                      {exp.type}
                     </div>
 
-                    <div>
-                        <h3 className="text-2xl font-semibold mb-6">Organizations</h3>
+                    {/* NAME */}
+                    <div className="text-base font-medium mt-1">
+                      {exp.name}
+                    </div>
 
-                        <motion.div
-                            className="flex gap-6 items-center"
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{once: true}}
-                            variants={{visible: {transition: {staggerChildren: 0.15}}}}
-                        >
-                        {data.organizations.map((org, i) => (
-                            <motion.div
-                                key={i}
-                                className="h-12 w-12 rounded-xl flex items-center justify-center"
-                                style={{
-                                    background: "var(--card)",
-                                    border: "1px solid var(--muted)"
-                                }}
-                                variants={{
-                                    hidden: {opacity: 0, scale: 0.8},
-                                    visible: {opacity: 1, scale: 1}
-                                }}
-                            >
-                                <span className="text-xs opacity-70">{org.name}</span>    
-                            </motion.div>
+                    {/* COMPANY */}
+                    <div className="text-sm italic opacity-70">
+                      {exp.company} ({exp.duration})
+                    </div>
+
+                    {/* LOGO */}
+                    {exp.logo?.asset?.url && (
+                      <img
+                        src={exp.logo.asset.url}
+                        alt={exp.name}
+                        className="h-8 mt-3 object-contain"
+                      />
+                    )}
+
+                    {/* IMAGES */}
+                    {exp.images && exp.images.length > 0 && (
+                      <div className="flex gap-2 mt-3">
+                        {exp.images.map((img, idx) => (
+                          <img
+                            key={idx}
+                            src={img.asset.url}
+                            alt=""
+                            className="h-14 w-20 object-cover rounded-md border border-white/10"
+                          />
                         ))}
-                        </motion.div>
-                    </div>
-                </div>                    
-            </motion.div>
-        </section>
-    )
+                      </div>
+                    )}
+                  </motion.li>
+                ))}
+              </motion.ul>
+            </div>
+          </div>
+
+          {/* ORGANIZATIONS */}
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  viewport={{ once: true }}
+  transition={{ duration: 0.5 }}
+>
+  <h3 className="text-xl font-semibold mb-6">Organizations</h3>
+
+  <div className="space-y-6">
+    {organizationsOnly.map((org, i) => (
+      <div
+        key={i}
+        className="flex items-center gap-4"
+      >
+        {/* LOGO */}
+        <div className="h-14 w-14 rounded-xl border border-white/20 flex items-center justify-center overflow-hidden">
+          {org.logo?.asset?.url ? (
+            <img
+              src={org.logo.asset.url}
+              alt={org.name}
+              className="object-contain h-full w-full p-2"
+            />
+          ) : (
+            <span className="text-xs opacity-60">{org.name}</span>
+          )}
+        </div>
+
+        {/* TEXT */}
+        <div>
+          <div className="text-base font-medium">
+            {org.name} {/* ini role / posisi */}
+          </div>
+          <div className="text-sm opacity-60">
+            {org.company} {/* ini nama organisasinya */}
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+</motion.div>
+
+
+        </div>
+      </div>
+    </section>
+  );
 }
