@@ -167,10 +167,10 @@ export default function ExperienceSection({
         {/* TEXT */}
         <div>
           <div className="text-base font-medium">
-            {org.name} {/* ini role / posisi */}
+            {org.name} 
           </div>
           <div className="text-sm opacity-60">
-            {org.company} {/* ini nama organisasinya */}
+            {org.company} 
           </div>
         </div>
       </div>
